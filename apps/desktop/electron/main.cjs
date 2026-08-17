@@ -12,6 +12,7 @@ const {
   createProduct,
   adjustStock,
 } = require('./db.cjs');
+const { openShift, getOpenShift, closeShift } = require('./shifts.cjs');
 
 const isDev = !app.isPackaged;
 let db;
@@ -45,6 +46,9 @@ function registerIpc() {
   ipcMain.handle('pos:sales:checkout', (_event, input) => checkout(db, input));
   ipcMain.handle('pos:sales:list', (_event, filters) => listSales(db, filters || {}));
   ipcMain.handle('pos:sales:get', (_event, saleId) => getSale(db, String(saleId || '')));
+  ipcMain.handle('pos:shift:open', (_event, input) => openShift(db, input));
+  ipcMain.handle('pos:shift:current', (_event, staffId) => getOpenShift(db, String(staffId || '')));
+  ipcMain.handle('pos:shift:close', (_event, input) => closeShift(db, input));
   ipcMain.handle('pos:health', () => ({ database: 'ok', online: false, pendingSync: Number(db.prepare("SELECT COUNT(*) AS count FROM sync_outbox WHERE status='pending'").get().count) }));
 }
 
