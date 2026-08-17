@@ -1,0 +1,40 @@
+{
+  "name": "dual-shop-retail-pos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline-first retail POS with online synchronization for independent shop installations.",
+  "main": "apps/desktop/dist-electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:electron\"",
+    "dev:renderer": "vite --config apps/desktop/vite.config.ts",
+    "dev:electron": "wait-on http://localhost:5173 && electron apps/desktop/electron/main.cjs",
+    "build": "tsc -b && vite build --config apps/desktop/vite.config.ts",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --pretty false",
+    "format": "prettier --write ."
+  },
+  "engines": { "node": ">=20.0.0" },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "electron": "^35.1.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.25.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3",
+    "vitest": "^3.1.2",
+    "wait-on": "^8.0.3"
+  }
+}
