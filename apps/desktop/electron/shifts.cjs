@@ -3,6 +3,13 @@ const crypto = require('node:crypto');
 function id() { return crypto.randomUUID(); }
 function now() { return new Date().toISOString(); }
 
+function ensureShiftReconciliationColumns(db) {
+  const columns = db.prepare('PRAGMA table_info(shifts)').all();
+  const names = new Set(columns.map((column) => column.name));
+  if (!names.has('expected_cash_pesewas')) db.exec('ALTER TABLE shifts ADD COLUMN expected_cash_pesewas INTEGER');
+  if (!names.has('difference_pesewas')) db.exec('ALTER TABLE shifts ADD COLUMN difference_pesewas INTEGER');
+}
+
 function requireCashier(db, staffId) {
   const user = db.prepare("SELECT id, name, role, active FROM users WHERE id=? AND active=1").get(staffId);
   if (!user) throw new Error('Authorized user required');
@@ -11,6 +18,7 @@ function requireCashier(db, staffId) {
 }
 
 function openShift(db, input) {
+  ensureShiftReconciliationColumns(db);
   const staffId = String(input?.staffId || '');
   const openingCashPesewas = Number(input?.openingCashPesewas ?? 0);
   requireCashier(db, staffId);
@@ -29,10 +37,12 @@ function openShift(db, input) {
 }
 
 function getOpenShift(db, staffId) {
-  return db.prepare("SELECT id, staff_id AS staffId, opened_at AS openedAt, opening_cash_pesewas AS openingCashPesewas, status FROM shifts WHERE staff_id=? AND status='open'").get(staffId) || null;
+  ensureShiftReconciliationColumns(db);
+  return db.prepare("SELECT id, staff_id AS staffId, opened_at AS openedAt, opening_cash_pesewas AS openingCashPesewas, expected_cash_pesewas AS expectedCashPesewas, difference_pesewas AS differencePesewas, status FROM shifts WHERE staff_id=? AND status='open'").get(staffId) || null;
 }
 
 function closeShift(db, input) {
+  ensureShiftReconciliationColumns(db);
   const staffId = String(input?.staffId || '');
   const closingCashPesewas = Number(input?.closingCashPesewas);
   requireCashier(db, staffId);
