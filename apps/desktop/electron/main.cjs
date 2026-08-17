@@ -13,6 +13,7 @@ const {
   adjustStock,
 } = require('./db.cjs');
 const { openShift, getOpenShift, closeShift } = require('./shifts.cjs');
+const { buildReceipt, printTcp, validateSaleForPrinting } = require('./receipt.cjs');
 
 const isDev = !app.isPackaged;
 let db;
@@ -49,6 +50,15 @@ function registerIpc() {
   ipcMain.handle('pos:shift:open', (_event, input) => openShift(db, input));
   ipcMain.handle('pos:shift:current', (_event, staffId) => getOpenShift(db, String(staffId || '')));
   ipcMain.handle('pos:shift:close', (_event, input) => closeShift(db, input));
+  ipcMain.handle('pos:receipt:preview', (_event, input) => {
+    const sale = validateSaleForPrinting(getSale(db, String(input?.saleId || '')));
+    return buildReceipt(sale, input?.options || {}).toString('base64');
+  });
+  ipcMain.handle('pos:receipt:print-network', async (_event, input) => {
+    const sale = validateSaleForPrinting(getSale(db, String(input?.saleId || '')));
+    const payload = buildReceipt(sale, input?.options || {});
+    return printTcp(payload, String(input?.host || ''), Number(input?.port || 9100));
+  });
   ipcMain.handle('pos:health', () => ({ database: 'ok', online: false, pendingSync: Number(db.prepare("SELECT COUNT(*) AS count FROM sync_outbox WHERE status='pending'").get().count) }));
 }
 
