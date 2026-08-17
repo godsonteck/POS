@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('pos', {
-  version: '0.2.0',
+  version: '0.3.0',
   session: {
     login: (input) => ipcRenderer.invoke('pos:session:login', input),
   },
@@ -18,6 +18,11 @@ contextBridge.exposeInMainWorld('pos', {
     checkout: (input) => ipcRenderer.invoke('pos:sales:checkout', input),
     list: (filters) => ipcRenderer.invoke('pos:sales:list', filters || {}),
     get: (saleId) => ipcRenderer.invoke('pos:sales:get', saleId),
+  },
+  shift: {
+    open: (input) => ipcRenderer.invoke('pos:shift:open', input),
+    current: (staffId) => ipcRenderer.invoke('pos:shift:current', staffId),
+    close: (input) => ipcRenderer.invoke('pos:shift:close', input),
   },
   health: () => ipcRenderer.invoke('pos:health'),
 });
