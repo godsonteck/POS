@@ -56,6 +56,8 @@ CREATE TABLE IF NOT EXISTS shifts (
   opening_cash_pesewas INTEGER NOT NULL CHECK (opening_cash_pesewas >= 0),
   closed_at TEXT,
   closing_cash_pesewas INTEGER,
+  expected_cash_pesewas INTEGER,
+  difference_pesewas INTEGER,
   status TEXT NOT NULL CHECK (status IN ('open','closed'))
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_one_open_shift_per_staff ON shifts(staff_id) WHERE status = 'open';
