@@ -1,16 +1,23 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('pos', {
-  version: '0.1.0',
+  version: '0.2.0',
   session: {
     login: (input) => ipcRenderer.invoke('pos:session:login', input),
   },
   catalog: {
     products: () => ipcRenderer.invoke('pos:catalog:products'),
     categories: () => ipcRenderer.invoke('pos:catalog:categories'),
+    lowStock: () => ipcRenderer.invoke('pos:catalog:low-stock'),
+    createProduct: (input) => ipcRenderer.invoke('pos:catalog:create-product', input),
+  },
+  inventory: {
+    adjustStock: (input) => ipcRenderer.invoke('pos:inventory:adjust-stock', input),
   },
   sales: {
     checkout: (input) => ipcRenderer.invoke('pos:sales:checkout', input),
+    list: (filters) => ipcRenderer.invoke('pos:sales:list', filters || {}),
+    get: (saleId) => ipcRenderer.invoke('pos:sales:get', saleId),
   },
   health: () => ipcRenderer.invoke('pos:health'),
 });
