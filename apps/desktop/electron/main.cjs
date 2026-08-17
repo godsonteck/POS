@@ -1,6 +1,17 @@
 const { app, BrowserWindow, session, ipcMain } = require('electron');
 const path = require('node:path');
-const { createDatabase, verifyPin, listProducts, listCategories, checkout } = require('./db.cjs');
+const {
+  createDatabase,
+  verifyPin,
+  listProducts,
+  listCategories,
+  checkout,
+  listSales,
+  getSale,
+  listLowStock,
+  createProduct,
+  adjustStock,
+} = require('./db.cjs');
 
 const isDev = !app.isPackaged;
 let db;
@@ -28,7 +39,12 @@ function registerIpc() {
   ipcMain.handle('pos:session:login', (_event, input) => verifyPin(db, String(input?.username || ''), String(input?.pin || '')));
   ipcMain.handle('pos:catalog:products', () => listProducts(db));
   ipcMain.handle('pos:catalog:categories', () => listCategories(db));
+  ipcMain.handle('pos:catalog:low-stock', () => listLowStock(db));
+  ipcMain.handle('pos:catalog:create-product', (_event, input) => createProduct(db, input, String(input?.actorId || '')));
+  ipcMain.handle('pos:inventory:adjust-stock', (_event, input) => adjustStock(db, input, String(input?.actorId || '')));
   ipcMain.handle('pos:sales:checkout', (_event, input) => checkout(db, input));
+  ipcMain.handle('pos:sales:list', (_event, filters) => listSales(db, filters || {}));
+  ipcMain.handle('pos:sales:get', (_event, saleId) => getSale(db, String(saleId || '')));
   ipcMain.handle('pos:health', () => ({ database: 'ok', online: false, pendingSync: Number(db.prepare("SELECT COUNT(*) AS count FROM sync_outbox WHERE status='pending'").get().count) }));
 }
 
