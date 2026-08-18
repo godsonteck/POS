@@ -12,6 +12,12 @@ export function openDatabase(options: DatabaseOptions): Database.Database {
   db.pragma('foreign_keys = ON');
   const schema = readFileSync(options.schemaPath ?? join(dirname(new URL(import.meta.url).pathname), 'schema.sql'), 'utf8');
   db.exec(schema);
+  db.exec(`CREATE TABLE IF NOT EXISTS sync_applied_events (
+    event_id TEXT PRIMARY KEY,
+    sequence INTEGER NOT NULL,
+    applied_at TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_sync_applied_sequence ON sync_applied_events(sequence);`);
   return db;
 }
 
