@@ -2,6 +2,12 @@ PRAGMA foreign_keys = ON;
 PRAGMA journal_mode = WAL;
 PRAGMA synchronous = FULL;
 
+CREATE TABLE IF NOT EXISTS app_metadata (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS shop_config (
   id TEXT PRIMARY KEY,
   type TEXT NOT NULL CHECK(type IN ('cosmetics-provisions','shisha')),
@@ -37,7 +43,6 @@ CREATE TABLE IF NOT EXISTS products (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
-
 CREATE INDEX IF NOT EXISTS idx_products_barcode ON products(barcode);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_active_name ON products(active, name);
@@ -64,8 +69,7 @@ CREATE TABLE IF NOT EXISTS shifts (
   difference_pesewas INTEGER,
   status TEXT NOT NULL CHECK(status IN ('open','closed'))
 );
-
-CREATE INDEX IF NOT EXISTS idx_shifts_staff_status ON shifts(staff_id, status);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_one_open_shift_per_staff ON shifts(staff_id) WHERE status = 'open';
 
 CREATE TABLE IF NOT EXISTS sales (
   id TEXT PRIMARY KEY,
@@ -76,7 +80,6 @@ CREATE TABLE IF NOT EXISTS sales (
   status TEXT NOT NULL CHECK(status IN ('completed','voided','refunded')),
   created_at TEXT NOT NULL
 );
-
 CREATE INDEX IF NOT EXISTS idx_sales_created ON sales(created_at);
 CREATE INDEX IF NOT EXISTS idx_sales_staff ON sales(staff_id, created_at);
 
@@ -100,8 +103,6 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at TEXT NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_payments_method_created ON payments(method, created_at);
-
 CREATE TABLE IF NOT EXISTS stock_movements (
   id TEXT PRIMARY KEY,
   product_id TEXT NOT NULL REFERENCES products(id),
@@ -111,7 +112,6 @@ CREATE TABLE IF NOT EXISTS stock_movements (
   created_by TEXT REFERENCES users(id),
   created_at TEXT NOT NULL
 );
-
 CREATE INDEX IF NOT EXISTS idx_stock_movements_product_created ON stock_movements(product_id, created_at);
 
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -123,20 +123,26 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   metadata_json TEXT,
   created_at TEXT NOT NULL
 );
-
 CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at);
 
 CREATE TABLE IF NOT EXISTS sync_outbox (
   id TEXT PRIMARY KEY,
   entity_type TEXT NOT NULL,
   entity_id TEXT NOT NULL,
-  operation TEXT NOT NULL,
+  operation TEXT NOT NULL CHECK(operation IN ('upsert','delete')),
   payload_json TEXT NOT NULL,
   attempts INTEGER NOT NULL DEFAULT 0,
   last_error TEXT,
   available_at TEXT,
   synced_at TEXT,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','processing','synced','failed')),
   created_at TEXT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_sync_pending ON sync_outbox(status, available_at, created_at);
 
-CREATE INDEX IF NOT EXISTS idx_sync_pending ON sync_outbox(synced_at, available_at, created_at);
+CREATE TABLE IF NOT EXISTS sync_applied_events (
+  event_id TEXT PRIMARY KEY,
+  sequence INTEGER NOT NULL,
+  applied_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sync_applied_sequence ON sync_applied_events(sequence);
