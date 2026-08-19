@@ -1,1 +1,53 @@
-.notice.error{color:#a43e38;background:#fff1ef;border-color:#f0c8c3}.login-page{min-height:100vh;display:grid;place-items:center;background:#101827}.login-card{width:390px;background:#fff;border-radius:18px;padding:34px;box-shadow:0 24px 80px #0005}.login-card .brand-mark{margin-bottom:22px}.login-card h1{font-size:28px;letter-spacing:-.04em;margin:6px 0 8px}.muted{font-size:12px;color:#7c899c;line-height:1.6;margin-bottom:25px}.login-card label{display:block;font-size:11px;font-weight:800;color:#58667a;margin:13px 0}.login-card input{display:block;width:100%;height:44px;border:1px solid #dce3eb;border-radius:8px;padding:0 11px;margin-top:6px;outline:0}.login-hint{display:block;color:#9aa5b5;font-size:9px;margin-top:12px;line-height:1.5}.modal-backdrop{position:fixed;inset:0;background:#10182799;backdrop-filter:blur(4px);display:grid;place-items:center;z-index:20}.success-card{width:360px;background:#fff;border-radius:18px;padding:32px;text-align:center;box-shadow:0 24px 80px #0004}.success-icon{width:58px;height:58px;border-radius:50%;background:#e7f8ef;color:#198a58;display:grid;place-items:center;font-size:28px;font-weight:900;margin:0 auto 16px}.success-card h2{margin:4px 0 8px}.success-card>strong{display:block;font-size:28px;margin-bottom:8px}.success-card>span{display:block;color:#7c899c;font-size:11px;margin-bottom:22px}.success-card .complete{justify-content:center}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.13em;color:#8290a5}
+.notice.error{color:#a43e38;background:#fff1ef;border-color:#f0c8c3}
+
+/* Purpose-built cosmetics/provisions retail visual layer */
+:root{--ink:#20231f;--muted:#777b73;--paper:#f7f5ef;--panel:#fffdf8;--line:#e6e1d6;--accent:#b35d35;--accent-dark:#8f4526;--accent-soft:#f5e8df;--graphite:#1e211e;--success:#267454}
+body{background:var(--paper);color:var(--ink)}
+.app{background:var(--paper)}
+.sidebar{width:252px;background:var(--graphite);border-right:1px solid #30332f;padding:24px 15px}
+.brand-mark{background:var(--accent);border-radius:12px;box-shadow:0 5px 14px #0004}
+.brand span{color:#a8aca4}
+.nav{border-radius:10px;color:#a8aca4;padding:13px 14px;transition:background .16s,color .16s,transform .16s}
+.nav:hover{background:#292d29;color:#f7f5ef}
+.nav.active{background:#302f2b;color:#fff3e9;box-shadow:inset 3px 0 var(--accent)}
+.sync{border-color:#373b36;background:#242824}.sync i,.connection i{background:#64c493}
+.header{background:rgba(255,253,248,.96);border-color:var(--line);backdrop-filter:blur(10px)}
+.crumb{color:var(--accent-dark)}
+.header h1{color:var(--ink)}
+.search{background:var(--panel);border-color:var(--line);box-shadow:0 4px 18px #33291b0b}
+.search:focus-within{border-color:#c99378;box-shadow:0 0 0 3px var(--accent-soft)}
+.search>span{color:var(--accent)}
+.categories{padding:14px 0 18px}
+.chip{background:var(--panel);border-color:var(--line);color:#686d65}.chip.selected{background:var(--accent-soft);border-color:#e2c2ae;color:var(--accent-dark)}
+.product-grid{gap:14px}
+.product{background:var(--panel);border-color:var(--line);border-radius:14px;box-shadow:0 5px 18px #33291b08;min-height:148px}
+.product:hover{border-color:#d3a58d;box-shadow:0 10px 24px #33291b12;transform:translateY(-2px)}
+.product-icon,.line-icon{background:var(--accent-soft);color:var(--accent-dark)}
+.product-info strong{color:var(--accent-dark)}
+.stock.low{color:#b84f32}
+.cart-panel{background:#fffdf8;border-left-color:var(--line)}
+.cart-head{border-color:var(--line)}
+.checkout{border-color:var(--line)}
+.total{border-color:#ddd7cc}.total b{color:var(--accent-dark)}
+.pay.active{border-color:#d6a68d;background:var(--accent-soft);color:var(--accent-dark)}
+.tender input{background:#fffdf8;border-color:var(--line)}
+.tender input:focus,.login-card input:focus{border-color:#c99378;box-shadow:0 0 0 3px var(--accent-soft)}
+.complete{background:var(--accent);box-shadow:0 5px 14px #8f452633;transition:transform .14s,background .14s,box-shadow .14s}
+.complete:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 8px 18px #8f452640}
+.complete:active{transform:translateY(0)}
+.metric,.panel{background:var(--panel);border-color:var(--line);box-shadow:0 4px 18px #33291b07}
+.metric b{color:var(--ink)}
+.panel-head{border-color:var(--line)}
+th,td{border-color:#eee9df}th{color:#8a887f}td{color:#62675f}
+.badge{background:#e8f3ec;color:var(--success)}.badge.danger{background:#faece6;color:#b84f32}
+.primary{background:var(--accent);border-color:var(--accent)}
+.modal-backdrop{background:#171914b8}
+.login-page{background:radial-gradient(circle at 50% 0,#3a3029 0,#1e211e 44%,#151714 100%)}
+.login-card{background:var(--panel);border:1px solid #ffffff20;box-shadow:0 30px 100px #0008}
+.login-card .brand-mark{background:var(--accent)}
+.login-card h1{color:var(--ink)}
+.login-card input{background:#fffdf8;border-color:var(--line)}
+.profile{background:var(--accent)}
+
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #d9aa90;outline-offset:2px}
+@media(max-width:1180px){.sidebar{width:224px}.pos-layout{grid-template-columns:minmax(0,1fr) 360px}.product-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr))}}
